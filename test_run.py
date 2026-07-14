@@ -7,7 +7,8 @@ from intelaish import (
     problem_card,
     explain_model,
     SQLBridge,
-    smart_viz
+    smart_viz,
+    smart_eda_pro  # <-- 1. Added the report function import here
 )
 
 pio.renderers.default = "browser"
@@ -29,3 +30,7 @@ cleaned_df["Experience"] = np.random.randint(1, 10, size=len(cleaned_df))
 
 # 4. RUN YOUR FUTURISTIC 3D GRAPH ENGINE!
 smart_viz(cleaned_df, mode="auto", target="Churn")
+
+# 5. COMPILE THE FULL INTERACTIVE WEB DASHBOARD!
+# <-- 2. Added this step to generate your HTML report file
+smart_eda_pro(cleaned_df, target="Churn", filename="my_data_dashboard.html")

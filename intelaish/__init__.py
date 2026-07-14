@@ -4,6 +4,7 @@ from .models import problem_card
 from .explain import explain_model
 from .sql_engine import SQLBridge
 from .visuals import smart_viz
+from .report import smart_eda_pro
 
 __all__ = [
     "smart_read",
@@ -12,4 +13,5 @@ __all__ = [
     "explain_model",
     "SQLBridge",
     "smart_viz",
+    "smart_eda_pro",
 ]
