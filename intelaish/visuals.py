@@ -1,91 +1,79 @@
 import pandas as pd
+import numpy as np
 import plotly.express as px
-from rich.console import Console
-from sklearn.cluster import KMeans
 import plotly.graph_objects as go
+from sklearn.cluster import KMeans
 
-console = Console()
 
-
-def smart_viz(df: pd.DataFrame, target: str = None):
+def smart_viz(df: pd.DataFrame, mode: str = "auto", columns: list = None, target: str = None, interactive: bool = True):
     """
-    Automatically analyzes the dataset columns and generates 
-    the most relevant interactive Plotly charts.
+    Futuristic visualization engine. Automatically selects the best plot styles,
+    creates rotatable 3D scatter plots with K-Means clustering, and builds sleek 2D visuals.
     """
-    console.print(
-        "\n[bold cyan]🎨 Launching Automated Visualization Engine...[/bold cyan]")
+    print(f"🎨 Generating dynamic visualization (Mode: {mode})...")
 
-    # Separate numeric and categorical columns
-    numeric_cols = df.select_dtypes(
-        include=['int64', 'float64']).columns.tolist()
-    categorical_cols = df.select_dtypes(
-        include=['object', 'category']).columns.tolist()
+    # 1. AUTOMATIC MODE: AI-style auto-selection of columns
+    if mode == "auto":
+        # Separate numeric and categorical features
+        numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+        if target in numeric_cols:
+            numeric_cols.remove(target)
 
-    # 1. Plot Distributions for Numeric Columns
-    for col in numeric_cols:
-        console.print(
-            f"📈 Generating distribution plot for numeric feature: [bold cyan]{col}[/bold cyan]")
-        fig = px.histogram(
-            df,
-            x=col,
-            marginal="box",
-            title=f"Distribution of {col}",
-            template="plotly_dark",
-            color_discrete_sequence=['#00ffcc']
-        )
-        fig.show()
+        # If we have 3 or more numeric features, trigger a 3D clustered scatter plot automatically
+        if len(numeric_cols) >= 3:
+            print(
+                "🌊 Multi-dimensional continuous data detected. Building 3D Cluster Environment...")
+            plot_3d_scatter_clusters(
+                df, columns=numeric_cols[:3], n_clusters=3)
+            return
+        else:
+            # Fallback to standard 2D analysis features
+            columns = df.columns.tolist()[:4]
 
-    # 2. Plot Counts for Categorical Columns
-    for col in categorical_cols:
-        console.print(
-            f"📊 Generating bar chart for categorical feature: [bold magenta]{col}[/bold magenta]")
-        fig = px.bar(
-            df,
-            x=col,
-            title=f"Value Counts of {col}",
-            template="plotly_dark",
-            color_discrete_sequence=['#ff007f']  # Fix applied here!
-        )
-        fig.show()
-
-    # 3. Relationship Plot (If a target column is provided)
-    if target and target in df.columns:
-        console.print(
-            f"🎯 Target variable specified. Generating relationship plots for: [bold yellow]{target}[/bold yellow]")
-        for col in numeric_cols:
-            if col != target:
-                fig = px.scatter(
-                    df,
-                    x=col,
-                    y=target,
-                    trendline="ols",
-                    title=f"Relationship: {col} vs {target}",
-                    template="plotly_dark"
-                )
+    # 2. MANUAL MODE OR FALLBACK: Generate beautiful, interactive 2D graphs
+    if columns:
+        for col in columns:
+            if df[col].dtype in [np.number]:
+                # Dynamic distribution rendering
+                fig = px.histogram(df, x=col, color=target, marginal="box",
+                                   title=f"Distribution of {col}", template="plotly_dark")
+                fig.show()
+            else:
+                # Dynamic categorical tracking
+                fig = px.histogram(df, x=col, color=target, barmode="group",
+                                   title=f"Categorical Analysis: {col}", template="plotly_dark")
                 fig.show()
 
 
-def advanced_viz(df: pd.DataFrame, n_clusters: int = 3):
-    """Generates a 3D interactive scatter plot."""
-    console.print(
-        "\n[bold cyan]🚀 Generating 3D Cluster Visualizations...[/bold cyan]")
-    numeric_df = df.select_dtypes(include=['int64', 'float64']).dropna()
+def plot_3d_scatter_clusters(df: pd.DataFrame, columns: list, n_clusters: int = 3):
+    """
+    Runs K-Means clustering under the hood and renders a spectacular 3D scatter environment.
+    """
+    if len(columns) < 3:
+        raise ValueError("3D rendering requires exactly 3 numeric columns.")
 
-    if numeric_df.shape[1] < 3:
-        console.print(
-            "[bold red]❌ Need at least 3 numeric columns for 3D visualization.[/bold red]")
-        return
+    x_col, y_col, z_col = columns[0], columns[1], columns[2]
 
-    kmeans = KMeans(n_clusters=n_clusters, n_init=10, random_state=42)
-    clusters = kmeans.fit_predict(numeric_df)
+    # Drop rows with missing values for clustering safety
+    cluster_data = df[columns].dropna()
 
-    cols = numeric_df.columns
-    fig = go.Figure(data=[go.Scatter3d(
-        x=numeric_df[cols[0]], y=numeric_df[cols[1]], z=numeric_df[cols[2]],
-        mode='markers', marker=dict(size=8, color=clusters, colorscale='Viridis', opacity=0.8)
-    )])
+    # Fit K-Means
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init="auto")
+    cluster_labels = kmeans.fit_predict(cluster_data)
 
-    fig.update_layout(title="3D Cluster Visualization", template="plotly_dark")
-    console.print(
-        "[bold green]✅ 3D Cluster Visualization Generated![/bold green]")
+    # Map back labels to visual dataframe
+    plot_df = cluster_data.copy()
+    plot_df['Cluster'] = [f"Cluster {i}" for i in cluster_labels]
+
+    # Build the 3D Plotly visual object
+    fig = px.scatter_3d(
+        plot_df, x=x_col, y=y_col, z=z_col,
+        color='Cluster',
+        title=f"🤖 Advanced 3D Spatial Clustering Engine ({x_col} vs {y_col} vs {z_col})",
+        template="plotly_dark",
+        opacity=0.8
+    )
+
+    # Make visual adjustments to styling
+    fig.update_layout(margin=dict(l=0, r=0, b=0, t=40))
     fig.show()

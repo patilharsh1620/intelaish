@@ -1,30 +1,28 @@
 import pandas as pd
 import numpy as np
+import plotly.io as pio
 from intelaish import (
-    smart_read, smart_clean, smart_viz, advanced_viz,
-    SmartInsights, problem_card, explain_model, SQLBridge
+    smart_read,
+    smart_clean,
+    problem_card,
+    explain_model,
+    SQLBridge,
+    smart_viz
 )
 
-# 1. Create dataset
-data = pd.DataFrame({
-    'Age': [25, np.nan, 35, 42, 28, 150, 31, 45, 29, 38],
-    'Salary': [50000, 65000, np.nan, 82000, 58000, 60000, 71000, 90000, 54000, 77000],
-    'Department': ['IT', 'HR', 'Finance', None, 'Marketing', 'IT', 'IT', 'Finance', 'HR', 'Marketing'],
-    'Churn': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-})
-data.to_csv("data.csv", index=False)
+pio.renderers.default = "browser"
 
-# 2. Run Pipeline
+# 1. Load data
 df = smart_read("data.csv")
-cleaned_df = smart_clean(df, target="Churn")
 
-# 3. Generate ML Problem Card
-problem_card(cleaned_df, target="Churn")
+# 2. Run data cleaning
+cleaned_df = smart_clean(
+    df, target="Churn", scale_numeric=True, encode_categorical=True)
 
-# 4. Generate SHAP Model Interpretability
-explain_model(cleaned_df, target="Churn", is_classification=True)
+# --- ADD A 3RD NUMERIC COLUMN FOR TESTING THE 3D ENGINE ---
+# This adds a random column of values between 1 and 10
+cleaned_df["Experience"] = np.random.randint(1, 10, size=len(cleaned_df))
+# ----------------------------------------------------------
 
-# 5. Generate Text-to-SQL (Requires API key to fully execute)
-sql_bot = SQLBridge(api_key="YOUR_GEMINI_API_KEY_HERE")
-sql_bot.text_to_sql(
-    cleaned_df, question="What is the average salary of employees who churned?")
+# 3. RUN YOUR FUTURISTIC 3D GRAPH ENGINE!
+smart_viz(cleaned_df, mode="auto", target="Churn")
