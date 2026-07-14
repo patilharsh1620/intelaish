@@ -6,7 +6,20 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/intelaish.svg)](https://pypi.org/project/intelaish/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+---
+
 `intelaish` is a powerful, lightweight Python library designed to automate the most time-consuming parts of the Data Science workflow. From intelligent missing value imputation and automated Machine Learning preprocessing to interactive 3D visualizations and HTML report generation, this tool gets your data 100% ready for Machine Learning in just a few lines of code.
+
+---
+
+## 📖 Table of Contents
+1. [Core Features](#✨-core-features-v020)
+2. [Installation](#📦-installation)
+3. [Quick Start Guide](#💻-quick-start-guide)
+4. [Detailed Functionality](#🛠️-detailed-functionality)
+5. [Built With](#🛠️-built-with)
+6. [About the Author](#👨‍💻-about-the-author)
+7. [License](#📄-license)
 
 ---
 
@@ -32,7 +45,6 @@ Note: Ensure you are using Python 3.8 or higher.
 💻 Quick Start Guide
 Here is a complete end-to-end example of how to ingest data, clean it, profile the ML task, visualize the data in 3D, and generate a web dashboard—all in less than 10 lines of code.
 
-Python
 import pandas as pd
 from intelaish import (
     smart_read, 
@@ -57,6 +69,14 @@ smart_viz(cleaned_df, mode="auto", target="TargetColumn")
 
 # 5. Compile a Full Interactive Web Dashboard
 smart_eda_pro(cleaned_df, target="TargetColumn", filename="automated_data_report.html")
+
+🛠️ Detailed Functionality
+Automated Preprocessing: intelaish removes the need for manual pipeline construction by wrapping complex Scikit-Learn logic into single function calls.
+
+Performance Reporting: The HTML dashboard output allows for easy sharing of data quality metrics with stakeholders, providing a professional edge to your analysis.
+
+Memory Optimization: The ingestion module is optimized to handle large datasets efficiently without overloading system resources.
+
 🛠️ Built With
 Pandas - High-performance data manipulation and analysis.
 
