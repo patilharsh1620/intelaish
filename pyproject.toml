@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intelaish"
+version = "0.1.0"
+description = "Next-generation automated EDA, cleaning, and AI insights."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "plotly>=5.14.0",
+    "scikit-learn>=1.2.0",
+    "google-genai>=0.2.0",
+    "rich>=13.0.0",
+    "statsmodels>=0.14.0",
+    "shap>=0.42.0",
+    "matplotlib>=3.7.0"
+]

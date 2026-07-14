@@ -1,0 +1,15 @@
+README.md
+pyproject.toml
+intelaish/__init__.py
+intelaish/cleaning.py
+intelaish/explain.py
+intelaish/ingestion.py
+intelaish/insights.py
+intelaish/models.py
+intelaish/sql_engine.py
+intelaish/visuals.py
+intelaish.egg-info/PKG-INFO
+intelaish.egg-info/SOURCES.txt
+intelaish.egg-info/dependency_links.txt
+intelaish.egg-info/requires.txt
+intelaish.egg-info/top_level.txt

@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: intelaish
+Version: 0.1.0
+Summary: Next-generation automated EDA, cleaning, and AI insights.
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: plotly>=5.14.0
+Requires-Dist: scikit-learn>=1.2.0
+Requires-Dist: google-genai>=0.2.0
+Requires-Dist: rich>=13.0.0
+Requires-Dist: statsmodels>=0.14.0
+Requires-Dist: shap>=0.42.0
+Requires-Dist: matplotlib>=3.7.0
