@@ -1,75 +1,92 @@
 import pandas as pd
+import numpy as np
 from rich.console import Console
+from rich.table import Table
 from rich.panel import Panel
 
 console = Console()
 
 
-def problem_card(df: pd.DataFrame, target: str):
+def problem_card(df: pd.DataFrame, target: str) -> None:
     """
-    Analyzes the target variable to determine the ML problem type (Classification/Regression),
-    checks for class imbalances, and recommends baseline machine learning models.
+    Intelligent profiling card that analyzes the target variable, 
+    detects the ML problem type, and recommends optimal baseline models.
     """
-    console.print(
-        f"\n[bold yellow]🎯 Generating ML Problem Card for target: '{target}'[/bold yellow]")
-
     if target not in df.columns:
         console.print(
             f"[bold red]❌ Error: Target column '{target}' not found in dataset.[/bold red]")
         return
 
-    target_data = df[target]
-    unique_vals = target_data.nunique()
-    dtype = target_data.dtype
+    console.print(
+        "\n[bold cyan]🔍 Initializing ML Problem Profiler...[/bold cyan]")
 
-    # 1. Determine Problem Type Heuristics
-    problem_type = "Unknown"
-    recommended_models = []
-    imbalance_warning = ""
+    target_series = df[target]
+    unique_vals = target_series.nunique()
+    dtype = target_series.dtype
 
-    # If it's numeric and has a wide spread of unique values, it's likely Regression
-    if dtype in ['int64', 'float64'] and unique_vals > 15:
-        problem_type = "Regression 📈"
-        recommended_models = [
-            "Linear Regression (Baseline)",
-            "Random Forest Regressor (Non-linear)",
-            "XGBoost Regressor (Advanced)"
-        ]
-        imbalance_warning = "[bold green]ℹ️ Continuous target detected. Class imbalance does not apply.[/bold green]"
-
-    # Otherwise, it's Classification
-    else:
-        problem_type = "Classification 🗂️"
-        recommended_models = [
-            "Logistic Regression (Baseline)",
-            "Random Forest Classifier (Robust)",
-            "Gradient Boosting / LightGBM (Advanced)"
-        ]
-
-        # 2. Check for Class Imbalance (Crucial ML step)
-        value_counts = target_data.value_counts(normalize=True)
-        min_class_ratio = value_counts.min()
-
-        if min_class_ratio < 0.2:  # If the smallest class makes up less than 20% of data
-            imbalance_warning = f"[bold red]⚠️ Warning: Severe Class Imbalance Detected![/bold red]\n   Smallest class is only {min_class_ratio*100:.1f}% of the dataset.\n   Consider SMOTE, oversampling, or class weighting before training."
+    # 1. Detect Problem Type
+    if dtype in ['object', 'category', 'bool'] or unique_vals <= 10:
+        if unique_vals == 2:
+            problem_type = "Binary Classification"
+            models = ["Logistic Regression",
+                      "Random Forest Classifier", "XGBoost Classifier"]
         else:
-            imbalance_warning = f"[bold green]✅ Class distribution is relatively balanced. Safe to proceed.[/bold green]"
+            problem_type = "Multi-class Classification"
+            models = ["Random Forest Classifier",
+                      "LightGBM Classifier", "CatBoost"]
+    else:
+        problem_type = "Regression"
+        models = ["Linear Regression",
+                  "Random Forest Regressor", "XGBoost Regressor"]
 
-    # 3. Build and Display the UI Panel
-    report = (
-        f"[bold]Target Variable:[/bold] {target}\n"
-        f"[bold]Problem Type Detected:[/bold] {problem_type}\n"
-        f"[bold]Unique Classes/Values:[/bold] {unique_vals}\n\n"
-        f"{imbalance_warning}\n\n"
-        f"[bold cyan]🤖 Recommended ML Models:[/bold cyan]\n"
-    )
+    # 2. Calculate Data Quality Score
+    total_cells = df.size
+    missing_cells = df.isnull().sum().sum()
+    duplicate_rows = df.duplicated().sum()
 
-    for i, model in enumerate(recommended_models, 1):
-        report += f"  {i}. {model}\n"
+    # Base score of 100, deduct for missing data and exact duplicates
+    quality_penalty = ((missing_cells / total_cells) * 100) + \
+        ((duplicate_rows / len(df)) * 10)
+    quality_score = max(0.0, min(100.0, 100.0 - quality_penalty))
+
+    if quality_score > 90:
+        score_color = "green"
+    elif quality_score > 70:
+        score_color = "yellow"
+    else:
+        score_color = "red"
+
+    # 3. Class Imbalance Check (For Classification)
+    imbalance_warning = "N/A (Regression)"
+    if "Classification" in problem_type:
+        value_counts = target_series.value_counts(normalize=True)
+        min_class_ratio = value_counts.min()
+        if min_class_ratio < 0.20:
+            imbalance_warning = f"[red]⚠️ Severe Imbalance Detected (Minority class is {min_class_ratio:.1%})[/red]"
+        else:
+            imbalance_warning = "[green]✅ Balanced Distribution[/green]"
+
+    # 4. Render the Output Dashboard
+    table = Table(show_header=False, box=None)
+    table.add_row("[bold]🎯 Target Variable:[/bold]", f"{target}")
+    table.add_row("[bold]🧠 Detected Task:[/bold]",
+                  f"[bold magenta]{problem_type}[/bold magenta]")
+    table.add_row("[bold]📊 Unique Target Values:[/bold]", f"{unique_vals}")
+    table.add_row("[bold]⚖️ Class Distribution:[/bold]", imbalance_warning)
+    table.add_row("[bold]✨ Data Quality Score:[/bold]",
+                  f"[bold {score_color}]{quality_score:.1f} / 100.0[/bold {score_color}]")
 
     console.print(Panel(
-        report,
-        title="📊 intelguruai ML Problem Card",
-        border_style="yellow",
-        expand=False
-    ))
+        table, title="🚀 [bold blue]intelguruai Problem Card[/bold blue]", border_style="cyan", expand=False))
+
+    # Render Model Recommendations
+    model_table = Table(title="🤖 Recommended Baseline Models",
+                        header_style="bold yellow")
+    model_table.add_column("Rank", justify="center", style="cyan")
+    model_table.add_column("Algorithm", style="green")
+
+    for idx, model in enumerate(models, 1):
+        model_table.add_row(f"#{idx}", model)
+
+    console.print(model_table)
+    console.print("\n")

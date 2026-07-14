@@ -19,10 +19,13 @@ df = smart_read("data.csv")
 cleaned_df = smart_clean(
     df, target="Churn", scale_numeric=True, encode_categorical=True)
 
+# 3. Generate ML Problem Card
+problem_card(cleaned_df, target="Churn")
+
 # --- ADD A 3RD NUMERIC COLUMN FOR TESTING THE 3D ENGINE ---
 # This adds a random column of values between 1 and 10
 cleaned_df["Experience"] = np.random.randint(1, 10, size=len(cleaned_df))
 # ----------------------------------------------------------
 
-# 3. RUN YOUR FUTURISTIC 3D GRAPH ENGINE!
+# 4. RUN YOUR FUTURISTIC 3D GRAPH ENGINE!
 smart_viz(cleaned_df, mode="auto", target="Churn")
