@@ -85,4 +85,14 @@ Scikit-Learn - Industry-standard machine learning preprocessing and scaling.
 Plotly - Beautiful, interactive, and exportable data visualizations.
 
 Rich - Advanced terminal formatting and UI dashboards.        
+👨‍💻 About the Author
+Harsh Patil
 
+Data Analyst specializing in Data Science, AI, and Predictive Modeling. Passionate about building automated, scalable solutions for complex data engineering bottlenecks and business optimization.
+
+LinkedIn: Connect with me
+
+GitHub: patilharsh1620
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
