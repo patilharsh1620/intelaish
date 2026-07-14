@@ -29,7 +29,7 @@ pip install intelaish
 
 Note: Ensure you are using Python 3.8 or higher.
 
-💻 Quick Start Guide
+*💻 Quick Start Guide*
 Here is a complete end-to-end example of how to ingest data, clean it, profile the ML task, visualize the data in 3D, and generate a web dashboard—all in less than 10 lines of code.
 
 Python
@@ -66,14 +66,14 @@ Plotly - Beautiful, interactive, and exportable data visualizations.
 
 Rich - Advanced terminal formatting and UI dashboards.
 
-👨‍💻 About the Author
+**👨‍💻 About the Author**
 Harsh Patil
 
 Data Analyst specializing in Data Science, AI, and Predictive Modeling. Passionate about building automated, scalable solutions for complex data engineering bottlenecks and business optimization.
 
-LinkedIn: Connect with me
+*LinkedIn:* Connect with me
 
-GitHub: patilharsh1620
+*GitHub:* patilharsh1620
 
-📄 License
+**📄 License**
 This project is licensed under the MIT License - see the LICENSE file for details.
